@@ -1,1 +1,123 @@
 TrafficLight with structured text
+
+// Bir adet Trafik Lambası İçin
+PROGRAM TrafficLight
+VAR
+	Timer: TON;
+	RedTime: TIME := T#5S;
+	GreenTime: TIME := T#5S;
+	YellowTime: TIME := T#2S;
+	
+	RedLight: BOOL;
+	GreenLight: BOOL;
+	YellowLight: BOOL;
+	
+END_VAR
+
+METHOD TrafficLightControl
+VAR 
+	State: INT := 0;
+	
+BEGIN
+     CASE State OF
+	  0: //Kırmızı Işık Durumu
+		 RedLight := TRUE;
+		 GreenLight := FALSE;
+		 YellowLight := FALSE;
+		 
+		 IF Timer.IN THEN
+			 State := 1; // Yeşil Işığa Geçiş
+			 Timer(IN := FALSE);
+		 END_IF
+		 
+   	  1: // Yeşil Işık Durumu
+	      RedLight := FALSE;
+		  GreenLight := TRUE;
+		  YellowLight := FALSE;
+		  
+		  IF Timer.IN THEN
+			  State := 2; // Sarı Işığa Geçiş
+	          Timer(IN := FALSE);
+		  END_IF
+		  
+	  2:  // Sarı Işık Durumu
+	       RedLight := FALSE;
+           GreenLiGHT := FALSE;
+           YellowLight := TRUE; 
+		   
+		   IF Timer.IN THEN
+			   State := 0; // Kırmızı Işığa Geçiş
+			   Timer(IN := FALSE);
+		   END_IF
+	  	  
+	 END_CASE
+	 
+	 Timer(IN := TRUE, PT := RedTime, ET := YellowTime + GreenTime);
+
+END_METHOD
+
+
+// İki adet Trafik Lambası İçin
+PROGRAM TrafficLight2Lamps
+VAR
+    Timer1: TON;  // Zaman rölesi 1
+    Timer2: TON;  // Zaman rölesi 2
+    RedTime: TIME := T#5s;  // Kırmızı ışık süresi
+    GreenTime: TIME := T#5s;  // Yeşil ışık süresi
+    AmberTime: TIME := T#2s;  // Sarı ışık süresi
+
+    RedLight1: BOOL;    // Kırmızı ışık 1
+    GreenLight1: BOOL;  // Yeşil ışık 1
+    AmberLight1: BOOL;  // Sarı ışık 1
+
+    RedLight2: BOOL;    // Kırmızı ışık 2
+    GreenLight2: BOOL;  // Yeşil ışık 2
+    AmberLight2: BOOL;  // Sarı ışık 2
+
+END_VAR
+
+// Trafik lambası kontrolü
+METHOD TrafficLightfor2Lamp
+VAR
+    State: INT := 0;  // Durum değişkeni (0: Kırmızı, 1: Yeşil, 2: Sarı)
+BEGIN
+    CASE State OF
+        0:  // Kırmızı ışık durumu
+            RedLight1 := TRUE;
+            GreenLight1 := FALSE;
+            AmberLight1 := FALSE;
+            RedLight2 := FALSE;
+            GreenLight2 := TRUE;
+            AmberLight2 := FALSE;
+            IF Timer1.IN THEN
+                State := 1;  // Yeşil ışığa geçiş
+                Timer1(IN := FALSE);
+            END_IF;
+        1:  // Yeşil ışık durumu
+            RedLight1 := FALSE;
+            GreenLight1 := TRUE;
+            AmberLight1 := FALSE;
+            RedLight2 := TRUE;
+            GreenLight2 := FALSE;
+            AmberLight2 := FALSE;
+            IF Timer1.IN THEN
+                State := 2;  // Sarı ışığa geçiş
+                Timer1(IN := FALSE);
+            END_IF;
+        2:  // Sarı ışık durumu
+            RedLight1 := FALSE;
+            GreenLight1 := FALSE;
+            AmberLight1 := TRUE;
+            RedLight2 := FALSE;
+            GreenLight2 := FALSE;
+            AmberLight2 := TRUE;
+            IF Timer1.IN THEN
+                State := 0;  // Kırmızı ışığa geçiş
+                Timer1(IN := FALSE);
+            END_IF;
+    END_CASE;
+
+    // Zaman rölelerinin çalışma sürelerini ayarla
+    Timer1(IN := TRUE, PT := RedTime, ET := AmberTime + GreenTime);
+    Timer2(IN := TRUE, PT := RedTime, ET := AmberTime + GreenTime);
+END_METHOD;
